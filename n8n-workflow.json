@@ -1,0 +1,77 @@
+{
+  "name": "Sentiment Analyzer AI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analyze-sentiment",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "sentiment-analyzer-id"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4-turbo-preview",
+        "prompt": "You are a Conversation Intelligence AI. Analyze the following transcript and return ONLY valid JSON matching this exact schema: {\n  \"overall_sentiment\": \"positive|negative|neutral\",\n  \"overall_score\": -1.0 to 1.0,\n  \"summary\": \"string\",\n  \"dominant_emotion\": \"string\",\n  \"resolution_status\": \"resolved|partially_resolved|unresolved|escalated\",\n  \"escalation_risk\": \"low|medium|high\",\n  \"conversation_quality\": 0-100,\n  \"customer\": { \"sentiment\": \"positive|negative|neutral\", \"frustration\": 0-100, \"satisfaction\": 0-100 },\n  \"agent\": { \"sentiment\": \"positive|negative|neutral\", \"empathy\": 0-100, \"professionalism\": 0-100 },\n  \"sentences\": [\n    { \"speaker\": \"customer|agent\", \"text\": \"string\", \"sentiment\": \"positive|negative|neutral\", \"score\": -1.0 to 1.0, \"emotion\": \"string\", \"reason\": \"string\" }\n  ]\n}\n\nTranscript:\n{{$json.body.transcript}}",
+        "responseFormat": {
+          "type": "json_object"
+        }
+      },
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "name": "Format JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        750,
+        300
+      ],
+      "notesInFlow": true,
+      "notes": "Parse OpenAI response string back into JSON",
+      "executeCode": "return JSON.parse($input.item.json.message.content);"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Format JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

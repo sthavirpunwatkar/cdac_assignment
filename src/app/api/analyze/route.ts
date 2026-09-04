@@ -19,13 +19,41 @@ export async function POST(request: Request) {
       );
     }
 
-    // Phase 6 will replace this delay and mock return with an actual call to n8n
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Connect to n8n if the webhook URL is provided in the environment
+    const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
+    
+    if (n8nWebhookUrl) {
+      const response = await fetch(n8nWebhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Optional: Add authentication header for n8n if configured
+          // "Authorization": `Bearer ${process.env.N8N_WEBHOOK_SECRET}`
+        },
+        body: JSON.stringify({ transcript }),
+      });
 
+      if (!response.ok) {
+        throw new Error(`n8n responded with status: ${response.status}`);
+      }
+
+      const aiData = await response.json();
+      
+      return NextResponse.json({
+        success: true,
+        data: aiData
+      });
+    }
+
+    // Fallback for development if n8n is not yet configured
+    console.warn("N8N_WEBHOOK_URL is not set. Falling back to mock data.");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    
     return NextResponse.json({
       success: true,
       data: mockAnalysis
     });
+
   } catch (error) {
     console.error("API Analyze Error:", error);
     return NextResponse.json(
