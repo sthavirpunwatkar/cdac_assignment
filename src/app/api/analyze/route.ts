@@ -1,63 +1,77 @@
 import { NextResponse } from "next/server";
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
 import { mockAnalysis } from "@/lib/mockData";
+
+export const maxDuration = 60; // Allow function to run up to 60 seconds on Vercel
+
+const analysisSchema = z.object({
+  overall_sentiment: z.enum(["positive", "negative", "neutral"]),
+  overall_score: z.number().describe("Score between -1.0 and 1.0"),
+  summary: z.string().describe("A concise 2-3 sentence summary of the conversation"),
+  dominant_emotion: z.string().describe("The primary emotion expressed in the conversation, e.g. frustration, relief, anger, empathy"),
+  resolution_status: z.enum(["resolved", "partially_resolved", "unresolved", "escalated"]),
+  escalation_risk: z.enum(["low", "medium", "high"]),
+  conversation_quality: z.number().describe("Score from 0 to 100 representing overall interaction quality"),
+  customer: z.object({
+    sentiment: z.enum(["positive", "negative", "neutral"]),
+    frustration: z.number().describe("0 to 100"),
+    satisfaction: z.number().describe("0 to 100"),
+  }),
+  agent: z.object({
+    sentiment: z.enum(["positive", "negative", "neutral"]),
+    empathy: z.number().describe("0 to 100"),
+    professionalism: z.number().describe("0 to 100"),
+  }),
+  sentences: z.array(z.object({
+    speaker: z.enum(["customer", "agent"]),
+    text: z.string(),
+    sentiment: z.enum(["positive", "negative", "neutral"]),
+    score: z.number().describe("-1.0 to 1.0"),
+    emotion: z.string().optional(),
+    reason: z.string().describe("AI reasoning for this classification").optional()
+  }))
+});
 
 export async function POST(request: Request) {
   try {
     const { transcript } = await request.json();
 
-    if (!transcript || typeof transcript !== "string") {
+    if (!transcript || typeof transcript !== "string" || transcript.trim().length === 0) {
       return NextResponse.json(
         { success: false, error: "Valid transcript text is required." },
         { status: 400 }
       );
     }
 
-    if (transcript.trim().length === 0) {
-      return NextResponse.json(
-        { success: false, error: "Transcript cannot be empty." },
-        { status: 400 }
-      );
+    // Check if API key is present
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn("OPENAI_API_KEY is not set. Falling back to mock data for UI testing.");
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return NextResponse.json({ success: true, data: mockAnalysis });
     }
 
-    // Connect to n8n if the webhook URL is provided in the environment
-    const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
-    
-    if (n8nWebhookUrl) {
-      const response = await fetch(n8nWebhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Optional: Add authentication header for n8n if configured
-          // "Authorization": `Bearer ${process.env.N8N_WEBHOOK_SECRET}`
-        },
-        body: JSON.stringify({ transcript }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`n8n responded with status: ${response.status}`);
-      }
-
-      const aiData = await response.json();
+    const { object } = await generateObject({
+      model: openai('gpt-4-turbo'),
+      schema: analysisSchema,
+      prompt: `You are an expert Conversation Intelligence AI. Analyze the following customer service transcript and extract the requested KPIs, sentiments, and summary.
       
-      return NextResponse.json({
-        success: true,
-        data: aiData
-      });
-    }
-
-    // Fallback for development if n8n is not yet configured
-    console.warn("N8N_WEBHOOK_URL is not set. Falling back to mock data.");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    return NextResponse.json({
-      success: true,
-      data: mockAnalysis
+Transcript:
+"""
+${transcript}
+"""`,
     });
 
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      data: object
+    });
+
+  } catch (error: any) {
     console.error("API Analyze Error:", error);
     return NextResponse.json(
-      { success: false, error: "An unexpected error occurred during analysis." },
+      { success: false, error: error.message || "An unexpected error occurred during AI analysis." },
       { status: 500 }
     );
   }
