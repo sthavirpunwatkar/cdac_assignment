@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     }
 
     const { object } = await generateObject({
-      model: groq('llama-3.1-70b-versatile'),
+      model: groq('openai/gpt-oss-120b'),
       schema: analysisSchema,
       prompt: `You are an expert Conversation Intelligence AI. Analyze the following customer service transcript and extract the requested KPIs, sentiments, and summary.
       

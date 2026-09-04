@@ -21,7 +21,7 @@ User -> Next.js UI -> API Route -> Vercel AI SDK -> OpenAI -> JSON -> Dashboard
 - **Frontend**: Next.js (App Router), React, Tailwind CSS
 - **Visualizations**: Recharts, Lucide React
 - **Backend / AI Orchestration**: Vercel AI SDK (`generateObject`), Zod
-- **AI Model**: Groq (`llama-3.1-70b-versatile`) via OpenAI compatibility API
+- **AI Model**: Groq (`openai/gpt-oss-120b`) via OpenAI compatibility API
 
 ## Local Setup
 1. Clone the repository.
