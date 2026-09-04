@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Conversation Sentiment Analyzer
 
-## Getting Started
+## Project Overview
+This is a full-stack AI-powered web application that accepts a conversation/phone-call transcript as a `.txt` file, analyzes it using AI, and presents actionable insights through a clean, readable dashboard.
 
-First, run the development server:
+## Features
+- **Authentication**: Basic assignment-level login protection.
+- **Transcript Upload**: Upload `.txt` transcripts (up to 5MB limit).
+- **Overall Sentiment**: AI determines if the call was positive, negative, or neutral.
+- **Sentence-Level Analysis**: Line-by-line sentiment breakdown and AI reasoning.
+- **KPI Dashboard**: Displays conversation quality, resolution status, agent empathy, and escalation risk.
+- **Visualizations**: Charts mapping emotion distribution and sentiment timeline.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Architecture
 ```
+User -> Next.js UI -> API Route -> Vercel AI SDK -> OpenAI -> JSON -> Dashboard
+```
+*Note: This project leverages the Vercel AI SDK directly within the Next.js API route as its agentic orchestration tool. This ensures strict JSON schema validation, keeps AI secrets on the backend, and allows for zero-configuration serverless deployment on Vercel without requiring a standalone n8n server.*
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
+- **Frontend**: Next.js (App Router), React, Tailwind CSS
+- **Visualizations**: Recharts, Lucide React
+- **Backend / AI Orchestration**: Vercel AI SDK (`generateObject`), Zod
+- **AI Model**: OpenAI (`gpt-4-turbo`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local Setup
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up your environment variables by copying the example file:
+   ```bash
+   cp .env.example .env.local
+   ```
+4. Add your `OPENAI_API_KEY` to `.env.local`.
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
+6. Open [http://localhost:3000](http://localhost:3000) and login with `test@example.com` / `password123`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
+- `OPENAI_API_KEY`: Your OpenAI API key required for actual AI analysis. If omitted, the application falls back to rendering mock data for UI testing purposes.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## AI Output Schema
+The application strictly enforces a JSON contract using Zod in the API layer before it reaches the frontend. This includes properties like `overall_sentiment`, `summary`, `resolution_status`, `escalation_risk`, and an array of `sentences` with individual `score` and `emotion` tagging.
