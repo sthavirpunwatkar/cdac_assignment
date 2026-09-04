@@ -35,7 +35,8 @@ const analysisSchema = z.object({
     sentiment: z.enum(["positive", "negative", "neutral"]),
     score: z.number().describe("-1.0 to 1.0"),
     emotion: z.string(),
-    reason: z.string().describe("AI reasoning for this classification")
+    reason: z.string().describe("AI reasoning for this classification"),
+    suggestion: z.string().describe("Actionable suggestion on how the agent could improve this interaction (or 'None' if perfectly handled)")
   }))
 });
 

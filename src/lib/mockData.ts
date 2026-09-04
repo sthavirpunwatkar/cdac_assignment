@@ -25,7 +25,7 @@ export const mockAnalysis: ConversationAnalysis = {
       sentiment: "negative",
       score: -0.86,
       emotion: "frustration",
-      reason: "The customer expresses dissatisfaction about the delay."
+      suggestion: "N/A", reason: "The customer expresses dissatisfaction about the delay."
     },
     {
       speaker: "agent",
@@ -33,7 +33,7 @@ export const mockAnalysis: ConversationAnalysis = {
       sentiment: "positive",
       score: 0.6,
       emotion: "empathy",
-      reason: "Agent acknowledges the issue and apologizes professionally."
+      suggestion: "N/A", reason: "Agent acknowledges the issue and apologizes professionally."
     },
     {
       speaker: "customer",
@@ -41,7 +41,7 @@ export const mockAnalysis: ConversationAnalysis = {
       sentiment: "negative",
       score: -0.9,
       emotion: "anger",
-      reason: "Customer is blocked and rejecting the agent's initial attempt to placate."
+      suggestion: "N/A", reason: "Customer is blocked and rejecting the agent's initial attempt to placate."
     },
     {
       speaker: "agent",
@@ -49,7 +49,7 @@ export const mockAnalysis: ConversationAnalysis = {
       sentiment: "neutral",
       score: 0.1,
       emotion: "professionalism",
-      reason: "Agent is providing factual information and taking action."
+      suggestion: "N/A", reason: "Agent is providing factual information and taking action."
     },
     {
       speaker: "customer",
@@ -57,7 +57,7 @@ export const mockAnalysis: ConversationAnalysis = {
       sentiment: "neutral",
       score: 0.2,
       emotion: "relief",
-      reason: "Customer calms down slightly after action is taken."
+      suggestion: "N/A", reason: "Customer calms down slightly after action is taken."
     }
   ]
 };

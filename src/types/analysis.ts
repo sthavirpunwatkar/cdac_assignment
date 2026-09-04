@@ -5,6 +5,7 @@ export interface SentenceAnalysis {
   score: number;
   emotion: string;
   reason: string;
+  suggestion: string;
 }
 
 export interface CustomerAnalysis {

@@ -36,6 +36,7 @@ export default function DashboardPage() {
     score: s.score,
     speaker: s.speaker,
     emotion: s.emotion,
+    suggestion: s.suggestion,
   }));
 
   return (
