@@ -63,10 +63,13 @@ export async function POST(request: Request) {
       schema: analysisSchema,
       prompt: `You are an expert Conversation Intelligence AI. Analyze the following customer service transcript and extract the requested KPIs, sentiments, and summary.
       
-Transcript:
-"""
-${transcript}
-"""`,
+      CRITICAL INSTRUCTIONS:
+      - You must output valid JSON strictly matching the provided schema.
+      - For each sentence, you MUST provide a "suggestion" string. If the sentence was handled perfectly, output "None".
+      
+      Transcript:
+      ${transcript}
+      `
     });
 
     return NextResponse.json({
