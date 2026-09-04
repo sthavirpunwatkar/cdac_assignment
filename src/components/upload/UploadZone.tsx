@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { UploadCloud, FileText, AlertCircle } from "lucide-react";
+import { UploadCloud, FileText, AlertCircle, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ConversationAnalysis } from "@/types/analysis";
 
@@ -71,6 +71,43 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
     }
   };
 
+  const handleSample = async () => {
+    setError(null);
+    setLoading(true);
+    setFilename("Sample_Conversation.txt");
+
+    const sampleText = `Customer: Hello, I've been trying to log into my account for the last two days and it keeps saying "Invalid Password", but I know my password is correct. This is incredibly frustrating because I need to access my billing statements for my taxes!
+Agent: Hello! I'm so sorry you're experiencing this issue. I completely understand how stressful that must be, especially during tax season. Let's get this sorted out right away. Can I have your account email?
+Customer: Yes, it's testuser@example.com.
+Agent: Thank you. I see the account here. It looks like our automated security system temporarily locked the account due to multiple login attempts from a new IP address. Have you been traveling recently or using a VPN?
+Customer: Oh... yes, actually. I've been using a new VPN for work. Does that cause it to lock?
+Agent: Yes, that can occasionally trigger our security protocols to protect your data. I have gone ahead and cleared the lock. I'm sending a secure password reset link to your email now. Once you reset it, you should be able to log in while using your VPN without any further issues.
+Customer: Okay, I just got the email. Let me reset it now... Okay, I'm in! I see my billing statements. Thank you so much for the quick help.
+Agent: You're very welcome! Is there anything else I can assist you with today?
+Customer: No, that's everything. Have a great day!
+Agent: You too! Thank you for contacting support.`;
+
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript: sampleText }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to analyze transcript.");
+      }
+
+      onUploadComplete(result.data);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       processFile(e.target.files[0]);
@@ -129,13 +166,23 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
           onChange={handleChange}
         />
         
-        <button 
-          onClick={() => fileInputRef.current?.click()}
-          className="mt-6 flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          <FileText className="h-4 w-4" />
-          Select .txt File
-        </button>
+        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <FileText className="h-4 w-4" />
+            Select .txt File
+          </button>
+          
+          <button 
+            onClick={handleSample}
+            className="flex items-center gap-2 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <Zap className="h-4 w-4 text-blue-500" />
+            Try Sample Conversation
+          </button>
+        </div>
 
         {filename && !error && (
           <p className="mt-4 text-xs font-medium text-gray-500">Selected: {filename}</p>
