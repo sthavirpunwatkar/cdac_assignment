@@ -35,6 +35,7 @@ export default function DashboardPage() {
     index: idx + 1,
     score: s.score,
     speaker: s.speaker,
+    emotion: s.emotion,
   }));
 
   return (

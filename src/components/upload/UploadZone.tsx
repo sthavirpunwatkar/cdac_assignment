@@ -77,13 +77,37 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="w-full max-w-2xl mx-auto space-y-4">
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-solid border-blue-200 bg-blue-50/50 p-12 transition-all">
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-6">
+            <svg className="h-10 w-10 animate-pulse" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a2 2 0 0 1 2 2c-.11.83.33 1.58 1.13 2.2a4 4 0 0 0 2.22 1.09c.81.16 1.45.75 1.57 1.56a2 2 0 0 1-1.08 2.22 4 4 0 0 0-2.09 2.24c-.16.82.42 1.59 1.25 1.76a2 2 0 0 1 1 3.51 4 4 0 0 0-1.87 2.45c-.17.81.42 1.58 1.25 1.75a2 2 0 0 1 1 3.51" />
+              <path d="M12 22a2 2 0 0 1-2-2c.11-.83-.33-1.58-1.13-2.2a4 4 0 0 0-2.22-1.09c-.81-.16-1.45-.75-1.57-1.56a2 2 0 0 1 1.08-2.22 4 4 0 0 0 2.09-2.24c.16-.82-.42-1.59-1.25-1.76a2 2 0 0 1-1-3.51 4 4 0 0 0 1.87-2.45c.17-.81-.42-1.58-1.25-1.75a2 2 0 0 1-1-3.51" />
+              <path d="M12 12a2 2 0 0 0-2-2" />
+              <path d="M12 12a2 2 0 0 0 2 2" />
+            </svg>
+            <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 animate-pulse">Analyzing Conversation</h3>
+          <p className="mt-3 text-sm text-gray-500 text-center max-w-sm flex items-center justify-center gap-2">
+            <svg className="h-4 w-4 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            Processing semantics, extracting KPIs, and identifying sentiment shifts with AI...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
       <div
         className={cn(
           "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-12 transition-colors relative",
-          isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-white hover:bg-gray-50",
-          loading && "opacity-75 pointer-events-none"
+          isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-white hover:bg-gray-50"
         )}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
@@ -107,14 +131,13 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
         
         <button 
           onClick={() => fileInputRef.current?.click()}
-          disabled={loading}
-          className="mt-6 flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-blue-400"
+          className="mt-6 flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           <FileText className="h-4 w-4" />
-          {loading ? "Analyzing via AI..." : "Select .txt File"}
+          Select .txt File
         </button>
 
-        {filename && !error && !loading && (
+        {filename && !error && (
           <p className="mt-4 text-xs font-medium text-gray-500">Selected: {filename}</p>
         )}
       </div>
