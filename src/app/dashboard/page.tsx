@@ -87,7 +87,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-1">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-1 self-start sticky top-6">
           <h3 className="mb-6 font-semibold text-gray-900">Emotion Distribution</h3>
           <EmotionChart data={emotionData} />
         </div>
