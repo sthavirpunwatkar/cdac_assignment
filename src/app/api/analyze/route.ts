@@ -34,8 +34,8 @@ const analysisSchema = z.object({
     text: z.string(),
     sentiment: z.enum(["positive", "negative", "neutral"]),
     score: z.number().describe("-1.0 to 1.0"),
-    emotion: z.string().optional(),
-    reason: z.string().describe("AI reasoning for this classification").optional()
+    emotion: z.string(),
+    reason: z.string().describe("AI reasoning for this classification")
   }))
 });
 

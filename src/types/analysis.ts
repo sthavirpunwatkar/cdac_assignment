@@ -3,16 +3,20 @@ export interface SentenceAnalysis {
   text: string;
   sentiment: 'positive' | 'negative' | 'neutral';
   score: number;
-  emotion?: string;
-  reason?: string;
+  emotion: string;
+  reason: string;
 }
 
-export interface ActorAnalysis {
+export interface CustomerAnalysis {
   sentiment: 'positive' | 'negative' | 'neutral';
-  frustration?: number;
-  satisfaction?: number;
-  empathy?: number;
-  professionalism?: number;
+  frustration: number;
+  satisfaction: number;
+}
+
+export interface AgentAnalysis {
+  sentiment: 'positive' | 'negative' | 'neutral';
+  empathy: number;
+  professionalism: number;
 }
 
 export interface ConversationAnalysis {
@@ -23,8 +27,8 @@ export interface ConversationAnalysis {
   resolution_status: 'resolved' | 'partially_resolved' | 'unresolved' | 'escalated';
   escalation_risk: 'low' | 'medium' | 'high';
   conversation_quality: number;
-  customer: ActorAnalysis;
-  agent: ActorAnalysis;
+  customer: CustomerAnalysis;
+  agent: AgentAnalysis;
   sentences: SentenceAnalysis[];
 }
 
