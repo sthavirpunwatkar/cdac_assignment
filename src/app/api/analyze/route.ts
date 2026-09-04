@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 import { mockAnalysis } from "@/lib/mockData";
 
 export const maxDuration = 60; // Allow function to run up to 60 seconds on Vercel
+
+const groq = createOpenAI({
+  baseURL: 'https://api.groq.com/openai/v1',
+  apiKey: process.env.GROQ_API_KEY || '',
+});
 
 const analysisSchema = z.object({
   overall_sentiment: z.enum(["positive", "negative", "neutral"]),
@@ -46,14 +51,14 @@ export async function POST(request: Request) {
     }
 
     // Check if API key is present
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn("OPENAI_API_KEY is not set. Falling back to mock data for UI testing.");
+    if (!process.env.GROQ_API_KEY) {
+      console.warn("GROQ_API_KEY is not set. Falling back to mock data for UI testing.");
       await new Promise(resolve => setTimeout(resolve, 2000));
       return NextResponse.json({ success: true, data: mockAnalysis });
     }
 
     const { object } = await generateObject({
-      model: openai('gpt-4-turbo'),
+      model: groq('llama-3.1-70b-versatile'),
       schema: analysisSchema,
       prompt: `You are an expert Conversation Intelligence AI. Analyze the following customer service transcript and extract the requested KPIs, sentiments, and summary.
       

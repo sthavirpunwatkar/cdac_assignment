@@ -21,7 +21,7 @@ User -> Next.js UI -> API Route -> Vercel AI SDK -> OpenAI -> JSON -> Dashboard
 - **Frontend**: Next.js (App Router), React, Tailwind CSS
 - **Visualizations**: Recharts, Lucide React
 - **Backend / AI Orchestration**: Vercel AI SDK (`generateObject`), Zod
-- **AI Model**: OpenAI (`gpt-4-turbo`)
+- **AI Model**: Groq (`llama-3.1-70b-versatile`) via OpenAI compatibility API
 
 ## Local Setup
 1. Clone the repository.
@@ -33,7 +33,7 @@ User -> Next.js UI -> API Route -> Vercel AI SDK -> OpenAI -> JSON -> Dashboard
    ```bash
    cp .env.example .env.local
    ```
-4. Add your `OPENAI_API_KEY` to `.env.local`.
+4. Add your `GROQ_API_KEY` to `.env.local`.
 5. Run the development server:
    ```bash
    npm run dev
@@ -41,7 +41,7 @@ User -> Next.js UI -> API Route -> Vercel AI SDK -> OpenAI -> JSON -> Dashboard
 6. Open [http://localhost:3000](http://localhost:3000) and login with `test@example.com` / `password123`.
 
 ## Environment Variables
-- `OPENAI_API_KEY`: Your OpenAI API key required for actual AI analysis. If omitted, the application falls back to rendering mock data for UI testing purposes.
+- `GROQ_API_KEY`: Your Groq API key required for actual AI analysis. If omitted, the application falls back to rendering mock data for UI testing purposes.
 
 ## AI Output Schema
 The application strictly enforces a JSON contract using Zod in the API layer before it reaches the frontend. This includes properties like `overall_sentiment`, `summary`, `resolution_status`, `escalation_risk`, and an array of `sentences` with individual `score` and `emotion` tagging.
