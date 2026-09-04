@@ -4,11 +4,11 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    // Mock authentication - accept any non-empty credentials for the assignment MVP
-    if (!email || !password) {
+    // Specific test user for evaluation
+    if (email !== 'test@example.com' || password !== 'password123') {
       return NextResponse.json(
-        { success: false, error: 'Email and password are required' },
-        { status: 400 }
+        { success: false, error: 'Invalid email or password. Please use test@example.com / password123' },
+        { status: 401 }
       );
     }
 
